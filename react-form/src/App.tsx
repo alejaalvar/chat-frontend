@@ -1,17 +1,17 @@
 /*
- * This is the file where we essentially return all
- * of the different compnents we have created
+ * Think of this file as rendering each page for
+ * each respective route we are visiting
  */
 
-import LoginForm from './components/LoginForm'
-//import SignupForm from './components/SignupForm'
+import LoginPage from './pages/LoginPage'
+//import SignupPage from './pages/SignupPage'
 
 function App() {
 
     return (
-        <div>
-            <LoginForm />
-        </div>
+        <>
+            <LoginPage />
+        </>
     )
 }
 

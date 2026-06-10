@@ -1,5 +1,5 @@
 /*
- * This is the actual app
+ * This is the actual application itself
  */
 
 import { StrictMode } from 'react'
