@@ -1,0 +1,12 @@
+{
+  "name": "form-react",
+  "version": "1.0.0",
+  "description": "A practice form built with React and TypeScript",
+  "license": "ISC",
+  "author": "Alejandro Alvarado",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
