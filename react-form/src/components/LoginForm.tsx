@@ -16,7 +16,7 @@ function LoginForm() {
                     <EmailInput />
                 </div>
                 <div className="form-group p-3 col-12">
-                    <PasswordInput />
+                    <PasswordInput label="Password:" id="password"/>
                 </div>
                 <div className="d-flex justify-content-center my-3">
                     <button className="btn btn-primary w-100" type="submit">Login</button>

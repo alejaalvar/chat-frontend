@@ -1,8 +1,8 @@
-function PasswordInput() {
+function PasswordInput({ label, id }: {label: string, id: string}) {
     return (
         <>
-            <label htmlFor="password">Password: </label>
-            <input className="form-control" id="password" type="password" required/>
+            <label htmlFor={id}>{label} </label>
+            <input className="form-control" id={id} type="password" required/>
         </>
     )
 }
