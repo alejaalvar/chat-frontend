@@ -22,9 +22,6 @@ function SignupForm() {
           <PasswordInput label="Confirm Password:" id="confirm-password" />
         </div>
         <div className="d-flex justify-content-center my-3">
-          {/* <button className="btn btn-primary w-100" type="submit">
-            Signup
-          </button> */}
           <AuthSubmit message="Signup" />
         </div>
       </div>
