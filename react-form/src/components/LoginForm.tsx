@@ -12,8 +12,12 @@ function LoginForm() {
     return (
         <form onSubmit={handleSubmit}>
             <div className="row">
-                <EmailInput />
-                <PasswordInput />
+                <div className="form-group p-3 col-12">
+                    <EmailInput />
+                </div>
+                <div className="form-group p-3 col-12">
+                    <PasswordInput />
+                </div>
                 <div className="d-flex justify-content-center my-3">
                     <button className="btn btn-primary w-100" type="submit">Login</button>
                 </div>
