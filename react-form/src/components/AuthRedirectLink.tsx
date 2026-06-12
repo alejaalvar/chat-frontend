@@ -10,9 +10,9 @@ function AuthRedirectLink({
   to: string;
 }) {
   return (
-    <p className="text-center">
+    <small className="text-center text-muted">
       {message} <Link to={to}>{linkText}</Link>
-    </p>
+    </small>
   );
 }
 
