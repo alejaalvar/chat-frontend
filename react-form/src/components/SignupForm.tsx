@@ -27,7 +27,7 @@ function SignupForm() {
           <PasswordInput
             label="Password:"
             id="password"
-            value={password}
+            currentValue={password}
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
@@ -35,7 +35,7 @@ function SignupForm() {
           <PasswordInput
             label="Confirm Password:"
             id="confirm-password"
-            value={confirmPassword}
+            currentValue={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
         </div>

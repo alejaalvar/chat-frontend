@@ -1,19 +1,19 @@
 function PasswordInput({
   label,
   id,
-  value,
+  currentValue,
   onChange,
 }: {
   label: string;
   id: string;
-  value: string;
+  currentValue: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }) {
   return (
     <>
       <label htmlFor={id}>{label} </label>
       <input
-        value={value}
+        value={currentValue}
         onChange={onChange}
         className="form-control"
         id={id}
@@ -25,4 +25,3 @@ function PasswordInput({
 }
 
 export default PasswordInput;
-
