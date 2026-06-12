@@ -3,6 +3,7 @@ import { useState } from "react";
 import EmailInput from "./EmailInput";
 import PasswordInput from "./PasswordInput";
 import AuthSubmit from "./AuthSubmit";
+import AuthError from "./AuthError";
 
 function SignupForm() {
   const [password, setPassword] = useState("");
@@ -39,9 +40,7 @@ function SignupForm() {
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
         </div>
-        {!isMatch && (
-          <small className="text-muted">Passwords do not match</small>
-        )}
+        {!isMatch && <AuthError message="Passwords do not match!" />}
         <div className="d-flex justify-content-center my-3">
           <AuthSubmit message="Signup" />
         </div>
