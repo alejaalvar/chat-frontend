@@ -1,4 +1,10 @@
-function EmailInput() {
+function EmailInput({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: React.ChangeEventHandler<HTMLInputElement>;
+}) {
   return (
     <>
       <label htmlFor="email">Email: </label>
@@ -9,6 +15,8 @@ function EmailInput() {
         type="email"
         aria-describedby="emailHelp"
         required
+        value={value}
+        onChange={onChange}
       />
       <small id="emailHelp" className="form-text text-muted">
         We'll never share your email with anyone else.

@@ -6,6 +6,7 @@ import AuthSubmit from "./AuthSubmit";
 import AuthError from "./AuthError";
 
 function SignupForm() {
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
@@ -22,7 +23,7 @@ function SignupForm() {
     <form onSubmit={handleSubmit}>
       <div className="row">
         <div className="form-group p-3 col-12">
-          <EmailInput />
+          <EmailInput value={email} onChange={(e) => setEmail(e.target.value)} />
         </div>
         <div className="form-group p-3 col-12">
           <PasswordInput
