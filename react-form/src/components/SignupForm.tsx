@@ -10,11 +10,12 @@ function SignupForm() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
+  const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const isMatch = password === confirmPassword;
   const navigate = useNavigate();
   const handleSubmit = (e: React.SubmitEvent) => {
     e.preventDefault(); // w/o this we can navigate w/empty fieldsets
-    if (!isMatch) {
+    if (!isMatch || !isValidEmail) {
       return;
     }
     navigate("/dashboard");
@@ -23,7 +24,10 @@ function SignupForm() {
     <form onSubmit={handleSubmit}>
       <div className="row">
         <div className="form-group p-3 col-12">
-          <EmailInput value={email} onChange={(e) => setEmail(e.target.value)} />
+          <EmailInput
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
         </div>
         <div className="form-group p-3 col-12">
           <PasswordInput
