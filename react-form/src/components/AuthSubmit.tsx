@@ -1,6 +1,16 @@
-function AuthSubmit({ message }: { message: string }) {
+function AuthSubmit({
+  message,
+  isDisabled,
+}: {
+  message: string;
+  isDisabled: boolean;
+}) {
   return (
-    <button className="btn btn-primary w-100" type="submit">
+    <button
+      className="btn btn-primary w-100"
+      type="submit"
+      disabled={isDisabled}
+    >
       {message}
     </button>
   );

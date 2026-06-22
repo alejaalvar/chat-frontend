@@ -42,7 +42,7 @@ function SignupForm() {
         </div>
         {!isMatch && <AuthError message="Passwords do not match!" />}
         <div className="d-flex justify-content-center my-3">
-          <AuthSubmit message="Signup" />
+          <AuthSubmit message="Signup" isDisabled={false} />
         </div>
       </div>
     </form>

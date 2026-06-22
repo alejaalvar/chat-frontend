@@ -6,8 +6,11 @@ import AuthSubmit from "./AuthSubmit";
 
 function LoginForm() {
   const [password, setPassword] = useState("");
+  const [isLoading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null); // null is falsy, which helps with conditional rendering
 
   const navigate = useNavigate();
+
   const handleSubmit = (e: React.SubmitEvent) => {
     e.preventDefault(); // w/o this we can navigate w/empty fieldsets
     navigate("/dashboard");
