@@ -7,8 +7,6 @@ import AuthError from "./AuthError";
 
 //const FAKE_EMAIL = "user@example.com";
 //const FAKE_PASSWORD = "password123";
-const LOGIN_ENDPOINT =
-  "https://instant-messaging-app-production.up.railway.app/api/auth/login";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
