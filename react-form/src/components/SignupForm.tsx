@@ -7,20 +7,19 @@ import AuthError from "./AuthError";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-async function signup(email: string, password: string): Promise<void> {
-  /*
-   */
+async function signup(email: string, password: string): Promise<boolean> {
   const res = await fetch(`${API_URL}/api/auth/signup`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password }),
-    credentials: "include", // required for the cookie
+    credentials: "include",
   });
 
+  const data = await res.json();
   if (!res.ok) {
-    const data = await res.json();
     throw new Error(data.message);
   }
+  return data.user.profileSetup as boolean;
 }
 
 function SignupForm() {
@@ -46,8 +45,8 @@ function SignupForm() {
       return;
     }
     try {
-      await signup(email, password);
-      navigate("/dashboard");
+      const profileSetup = await signup(email, password);
+      navigate("/dashboard", { state: { profileSetup } });
     } catch (err) {
       setError((err as Error).message);
     } finally {
