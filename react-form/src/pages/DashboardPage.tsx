@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import ProfileSetupModal from "../components/ProfileSetupModal";
+import Sidebar from "../components/Sidebar";
+import MessageBoard from "../components/MessageBoard";
 
 function DashboardPage() {
   const location = useLocation();
@@ -8,9 +10,16 @@ function DashboardPage() {
   const [showModal, setShowModal] = useState(needsSetup);
 
   return (
-    <div>
+    <div className="container">
       <h1>Dashboard</h1>
-      <p>Dashboard route...</p>
+      <div className="row">
+        <div className="col">
+          <Sidebar />
+        </div>
+        <div className="col">
+          <MessageBoard />
+        </div>
+      </div>
       <ProfileSetupModal show={showModal} onClose={() => setShowModal(false)} />
     </div>
   );
