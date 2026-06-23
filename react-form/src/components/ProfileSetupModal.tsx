@@ -16,6 +16,12 @@ function ProfileSetupModal({ show, onClose }: Props) {
   if (!show) return null;
 
   const handleSave = async () => {
+    if (!firstName.trim() || !lastName.trim()) {
+      setError("First name and last name are required.");
+      setFirstName("");
+      setLastName("");
+      return;
+    }
     setError(null);
     setIsLoading(true);
     try {
