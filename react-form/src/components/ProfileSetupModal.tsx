@@ -39,11 +39,19 @@ function ProfileSetupModal({ show, onClose }: Props) {
 
   return (
     <>
-      <div className="modal fade show d-block" tabIndex={-1} aria-labelledby="updateProfileLabel" aria-modal="true" role="dialog">
+      <div
+        className="modal fade show d-block"
+        tabIndex={-1}
+        aria-labelledby="updateProfileLabel"
+        aria-modal="true"
+        role="dialog"
+      >
         <div className="modal-dialog">
           <div className="modal-content">
             <div className="modal-header">
-              <h1 className="modal-title fs-5" id="updateProfileLabel">Welcome!</h1>
+              <h1 className="modal-title fs-5" id="updateProfileLabel">
+                Welcome!
+              </h1>
             </div>
             <div className="modal-body">
               <p className="fst-italic text-secondary-emphasis">
@@ -51,7 +59,9 @@ function ProfileSetupModal({ show, onClose }: Props) {
               </p>
               <form>
                 <div className="mb-3">
-                  <label htmlFor="first-name" className="col-form-label">First name:</label>
+                  <label htmlFor="first-name" className="col-form-label">
+                    First name:
+                  </label>
                   <input
                     type="text"
                     className="form-control"
@@ -61,7 +71,9 @@ function ProfileSetupModal({ show, onClose }: Props) {
                   />
                 </div>
                 <div className="mb-3">
-                  <label htmlFor="last-name" className="col-form-label">Last name:</label>
+                  <label htmlFor="last-name" className="col-form-label">
+                    Last name:
+                  </label>
                   <input
                     type="text"
                     className="form-control"
