@@ -3,7 +3,7 @@ import AuthRedirectLink from "../components/AuthRedirectLink";
 
 function LoginPage() {
   return (
-    <div className="container d-flex align-items-center justify-content-center py-5 shadow rounded">
+    <div className="container d-flex align-items-center justify-content-center py-5 shadow rounded-4 my-auto">
       <main>
         <h1 className="text-center">Login</h1>
         <LoginForm />
