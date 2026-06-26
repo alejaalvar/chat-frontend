@@ -11,7 +11,7 @@ function DashboardPage() {
 
   return (
     <div className="container-fluid m-0">
-      <div className="row min-vh-100">
+      <div className="row min-vh-100 gx-2">
         <div className="col-md-3 p-0">
           <Sidebar />
         </div>

@@ -1,6 +1,6 @@
 export default function MessageInput() {
   return (
-    <div className="p-3">
+    <div className="p-3 mt-auto">
       <div className="input-group shadow-sm rounded-pill">
         <input
           type="text"
