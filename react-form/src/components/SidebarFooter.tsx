@@ -1,8 +1,21 @@
-export default function SidebarFooter() {
+import { Link } from "react-router-dom";
+
+interface Props {
+  onProfileClick: () => void;
+}
+
+export default function SidebarFooter({ onProfileClick }: Props) {
   return (
-    <div className="d-flex flex-row-reverse w-100 bg-success rounded-pill shadow-sm mt-auto">
-      <span className="p-3">Logout</span>
-      <span className="p-3">Profile</span>
+    <div className="d-flex flex-row-reverse w-100 rounded-pill shadow mt-auto bg-secondary-subtle bg-gradient">
+      <Link to="/login" className="p-3 bg-light-subtle rounded-end-pill">
+        Logout
+      </Link>
+      <span
+        className="p-3 bg-light-subtle rounded-start-pill"
+        onClick={onProfileClick}
+      >
+        Profile
+      </span>
     </div>
   );
 }

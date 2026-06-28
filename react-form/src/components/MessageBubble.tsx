@@ -14,7 +14,9 @@ export default function MessageBubble({
 
   return (
     <div className={`d-flex ${justify} mb-2`}>
-      <span className={`p-3 rounded-pill ${bubbleColor}`}>{message}</span>
+      <span className={`p-2 rounded-pill shadow-sm ${bubbleColor}`}>
+        {message}
+      </span>
     </div>
   );
 }

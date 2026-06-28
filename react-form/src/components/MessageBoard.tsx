@@ -4,7 +4,7 @@ import MessageBoardHeader from "./MessageBoardHeader";
 
 export default function MessageBoard() {
   return (
-    <div className="text-white rounded-4 p-2 shadow-sm w-100 h-100 d-flex flex-column">
+    <div className="text-white rounded-4 p-2 shadow-sm w-100 h-100 d-flex flex-column bg-light-subtle">
       <MessageBoardHeader name="John Doe" />
       <MessageBubble message="Hello, how are you?" side="left" />
       <MessageBubble message="I'm good, thanks!" side="right" />

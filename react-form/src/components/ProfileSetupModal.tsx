@@ -5,9 +5,10 @@ const API_URL = import.meta.env.VITE_API_URL;
 interface Props {
   show: boolean;
   onClose: () => void;
+  mode: "setup" | "edit";
 }
 
-function ProfileSetupModal({ show, onClose }: Props) {
+function ProfileSetupModal({ show, onClose, mode }: Props) {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -56,13 +57,23 @@ function ProfileSetupModal({ show, onClose }: Props) {
           <div className="modal-content">
             <div className="modal-header">
               <h1 className="modal-title fs-5" id="updateProfileLabel">
-                Welcome!
+                {mode === "setup" ? "Welcome!" : "Edit Profile"}
               </h1>
+              {mode === "edit" && (
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={onClose}
+                  aria-label="Close"
+                />
+              )}
             </div>
             <div className="modal-body">
-              <p className="fst-italic text-secondary-emphasis">
-                Let's finish setting up your profile...
-              </p>
+              {mode === "setup" && (
+                <p className="fst-italic text-secondary-emphasis">
+                  Let's finish setting up your profile...
+                </p>
+              )}
               <form>
                 <div className="mb-3">
                   <label htmlFor="first-name" className="col-form-label">
@@ -92,6 +103,15 @@ function ProfileSetupModal({ show, onClose }: Props) {
               </form>
             </div>
             <div className="modal-footer">
+              {mode === "edit" && (
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={onClose}
+                >
+                  Cancel
+                </button>
+              )}
               <button
                 type="button"
                 className="btn btn-primary"
