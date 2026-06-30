@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { useUser } from "../context/UserContext";
+import { useSocket } from "../context/SocketContext";
 import type { Contact } from "./ContactEntry";
+import AuthError from "./AuthError";
 import MessageBubble from "./MessageBubble";
 import MessageInput from "./MessageInput";
 import MessageBoardHeader from "./MessageBoardHeader";
@@ -20,7 +22,8 @@ interface Message {
   sender: MessageSender;
   recipient: MessageSender;
   content: string;
-  createdAt: string;
+  createdAt?: string;
+  timestamp?: string;
 }
 
 interface Props {
@@ -29,7 +32,9 @@ interface Props {
 
 export default function MessageBoard({ selectedContact }: Props) {
   const { user } = useUser();
+  const socket = useSocket();
   const [messages, setMessages] = useState<Message[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!selectedContact) return;
@@ -41,8 +46,39 @@ export default function MessageBoard({ selectedContact }: Props) {
       credentials: "include",
     })
       .then((res) => res.json())
-      .then((data) => setMessages(data.messages ?? []));
+      .then((data) => {
+        setError(null);
+        setMessages(data.messages ?? []);
+      })
+      .catch((e) =>
+        setError(e instanceof Error ? e.message : "Failed to load messages")
+      );
   }, [selectedContact]);
+
+  useEffect(() => {
+    if (!socket || !selectedContact) return;
+
+    const handleReceiveMessage = (msg: Message) => {
+      const isRelevant =
+        msg.sender._id === selectedContact._id ||
+        msg.recipient._id === selectedContact._id;
+      if (isRelevant) setMessages((prev) => [...prev, msg]);
+    };
+
+    socket.on("receiveMessage", handleReceiveMessage);
+    return () => {
+      socket.off("receiveMessage", handleReceiveMessage);
+    };
+  }, [socket, selectedContact]);
+
+  const handleSend = (content: string) => {
+    if (!socket || !user || !selectedContact) return;
+    socket.emit("sendMessage", {
+      sender: user.id,
+      recipient: selectedContact._id,
+      content,
+    });
+  };
 
   if (!selectedContact) {
     return (
@@ -57,6 +93,7 @@ export default function MessageBoard({ selectedContact }: Props) {
       <MessageBoardHeader
         name={`${selectedContact.firstName} ${selectedContact.lastName}`}
       />
+      {error && <AuthError message={error} />}
       <div className="flex-grow-1 overflow-auto">
         {messages.map((message) => (
           <MessageBubble
@@ -66,7 +103,7 @@ export default function MessageBoard({ selectedContact }: Props) {
           />
         ))}
       </div>
-      <MessageInput />
+      <MessageInput onSend={handleSend} />
     </div>
   );
 }

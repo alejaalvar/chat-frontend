@@ -2,6 +2,51 @@
 
 ---
 
+## useFetch hook + Socket.IO real-time messaging
+
+### What changed
+
+**New file — `src/hooks/useFetch.ts`**
+A generic data-fetching hook that accepts a `fetcher` function (or `null` to skip) and a deps array. Returns `{ data, loading, error }`. Uses a `cancelled` flag to prevent setState calls after a component unmounts. The `null` fetcher pattern is how callers opt out of fetching when a required dep (like `selectedContact`) isn't available yet.
+
+**`src/context/SocketContext.tsx`** (new file)
+Manages the Socket.IO client connection. Connects once when the logged-in user is set in context, disconnects on logout or user change. Exports `SocketProvider` and `useSocket()`. Must be nested inside `<UserProvider>` because it calls `useUser()`.
+
+**`src/main.tsx`**
+Added `<SocketProvider>` inside `<UserProvider>` so any component in the tree can call `useSocket()` to get the live socket.
+
+**`src/components/Sidebar.tsx`**
+Replaced the contacts `useEffect` + `contacts` state with `useFetch`. The hook handles loading state and surfaces errors automatically. The debounced search `useEffect` is kept inline (the debounce timer makes the hook pattern awkward there) but now has a `.catch()` and a `searchError` state. Both `contactsError` and `searchError` are collapsed into a single `error` variable and rendered via `<AuthError>` when non-null.
+
+**`src/components/MessageBoard.tsx`**
+- Added `error` state + `.catch()` to the messages fetch; renders `<AuthError>` when set.
+- Added a second `useEffect` that subscribes to the socket's `receiveMessage` event. Only appends messages that involve the currently selected contact (by checking sender and recipient `_id`).
+- Added `handleSend` — emits `sendMessage` to the socket with `{ sender: user.id, recipient: selectedContact._id, content }`. Does NOT optimistically add the message to state; the backend emits `receiveMessage` back to the sender as a delivery confirmation and the socket listener handles the append.
+- Passes `onSend={handleSend}` to `<MessageInput>`.
+
+**`src/components/MessageInput.tsx`**
+Converted from a static presentational component to a controlled form. Accepts `onSend: (content: string) => void`. Calls `onSend(text.trim())` on submit and clears the input.
+
+### Decisions made
+
+- **`setError(null)` inside the fetch `.then()`, not the effect body** — the linter flags synchronous `setState` calls directly in the effect body as causing cascading renders. Clearing error in the `.then()` callback is the correct pattern.
+
+- **Socket connection owned by SocketContext, not a component** — tying the connection to a component's lifecycle would disconnect and reconnect on every re-render of that component. A context creates it once per login session.
+
+- **No optimistic message append** — the backend emits `receiveMessage` back to the sender as a delivery confirmation. Appending optimistically and then again on confirmation would duplicate the message. The slight latency (one round-trip) is acceptable and keeps the state simpler.
+
+- **`useFetch` not used for MessageBoard messages** — the messages state needs to be mutated by the socket listener as well as the REST fetch. Keeping it as a local `useState` makes both update paths simple. `useFetch` is a better fit for read-only data (like the contacts list).
+
+### Areas to revisit
+
+- **Socket error handling** — the backend emits an `error` event on `sendMessage` failures (missing fields, unauthorized sender). The frontend currently ignores this event. Consider listening for it in `MessageBoard` and showing an error message.
+
+- **No loading state shown to the user** — `useFetch` tracks `loading` but Sidebar doesn't render a spinner. Easy to add but skipped for now.
+
+- **Context lost on page refresh** — still unresolved. `user` resets to `null` on refresh, which means the socket never connects and the contacts list never loads. A `/api/auth/me` check on app mount would fix this.
+
+---
+
 ## Semantic HTML audit and fixes
 
 ### What changed
