@@ -22,7 +22,7 @@ export default function Sidebar({ onContactSelect, onProfileClick }: Props) {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchError, setSearchError] = useState<string | null>(null);
 
-  const { data: contactsData, error: contactsError } =
+  const { data: contactsData, error: contactsError, loading } =
     useFetch<ContactsResponse>(
       () =>
         fetch(`${API_URL}/api/contacts/get-contacts-for-list`, {
@@ -71,6 +71,13 @@ export default function Sidebar({ onContactSelect, onProfileClick }: Props) {
         onChange={(e) => setSearchQuery(e.target.value)}
       />
       {error && <AuthError message={error} />}
+      {loading && (
+        <div className="d-flex justify-content-center mt-3">
+          <div className="spinner-border text-primary" role="status">
+            <span className="visually-hidden">Loading contacts...</span>
+          </div>
+        </div>
+      )}
       {displayedContacts.map((contact) => (
         <ContactEntry
           key={contact._id}

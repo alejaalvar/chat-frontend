@@ -56,6 +56,17 @@ export default function MessageBoard({ selectedContact }: Props) {
   }, [selectedContact]);
 
   useEffect(() => {
+    if (!socket) return;
+    const handleSocketError = (data: { message: string }) => {
+      setError(data.message);
+    };
+    socket.on("error", handleSocketError);
+    return () => {
+      socket.off("error", handleSocketError);
+    };
+  }, [socket]);
+
+  useEffect(() => {
     if (!socket || !selectedContact) return;
 
     const handleReceiveMessage = (msg: Message) => {
