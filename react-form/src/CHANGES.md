@@ -2,6 +2,27 @@
 
 ---
 
+## Socket error handling + Sidebar loading spinner
+
+### What changed
+
+**`src/components/MessageBoard.tsx`**
+Added a `useEffect` that listens for the socket's `error` event and writes the message into the existing `error` state (already rendered by `<AuthError>`). The backend emits this event when `sendMessage` fails — missing fields, unauthorized sender, or a DB write error. Dep array is `[socket]` only since this listener isn't contact-scoped.
+
+**`src/components/Sidebar.tsx`**
+Destructured `loading` from the `useFetch` call (the hook already tracked it, it was just unused). Added a Bootstrap `spinner-border` between the SearchBar and the contact list, rendered while `loading` is true. Includes `visually-hidden` text for screen readers. Disappears as soon as the fetch resolves.
+
+### Decisions made
+
+- **Reused existing `error` state** in MessageBoard rather than adding a separate `socketError` state — both fetch errors and socket errors are displayed the same way, so the distinction is not useful to the user.
+- **`"error"` is safe as a custom event name in Socket.IO v4** — connection-level errors use `connect_error`, not `error`, so there's no collision with the built-in event.
+
+### Areas to revisit
+
+- No new areas introduced by these changes.
+
+---
+
 ## useFetch hook + Socket.IO real-time messaging
 
 ### What changed
