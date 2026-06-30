@@ -4,10 +4,12 @@ import EmailInput from "./EmailInput";
 import PasswordInput from "./PasswordInput";
 import AuthSubmit from "./AuthSubmit";
 import AuthError from "./AuthError";
+import { useUser } from "../context/UserContext";
+import type { User } from "../context/UserContext";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-async function signup(email: string, password: string): Promise<boolean> {
+async function signup(email: string, password: string): Promise<User> {
   const res = await fetch(`${API_URL}/api/auth/signup`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -19,7 +21,7 @@ async function signup(email: string, password: string): Promise<boolean> {
   if (!res.ok) {
     throw new Error(data.message);
   }
-  return data.user.profileSetup as boolean;
+  return data.user as User;
 }
 
 function SignupForm() {
@@ -32,6 +34,7 @@ function SignupForm() {
   const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const isMatch = password === confirmPassword;
   const navigate = useNavigate();
+  const { setUser } = useUser();
 
   const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault(); // w/o this we can navigate w/empty fieldsets
@@ -45,8 +48,9 @@ function SignupForm() {
       return;
     }
     try {
-      const profileSetup = await signup(email, password);
-      navigate("/dashboard", { state: { profileSetup } });
+      const user = await signup(email, password);
+      setUser(user);
+      navigate("/dashboard");
     } catch (err) {
       setError((err as Error).message);
     } finally {

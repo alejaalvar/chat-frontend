@@ -10,12 +10,12 @@ export default function SidebarFooter({ onProfileClick }: Props) {
       <Link to="/login" className="p-3 bg-light-subtle rounded-end-pill">
         Logout
       </Link>
-      <span
-        className="p-3 bg-light-subtle rounded-start-pill"
+      <button
+        className="btn border-0 p-3 bg-light-subtle rounded-start-pill"
         onClick={onProfileClick}
       >
         Profile
-      </span>
+      </button>
     </div>
   );
 }

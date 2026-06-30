@@ -1,5 +1,5 @@
 function AuthError({ message }: { message: string }) {
-  return <small className="text-muted ">{message}</small>;
+  return <p role="alert" className="text-danger">{message}</p>;
 }
 
 export default AuthError;

@@ -1,4 +1,9 @@
-export default function SearchBar() {
+interface Props {
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}
+
+export default function SearchBar({ value, onChange }: Props) {
   return (
     <div className="px-3 pb-3">
       <div className="input-group">
@@ -11,6 +16,8 @@ export default function SearchBar() {
           placeholder="Search contacts..."
           aria-label="Search contacts"
           className="form-control border-0 rounded-end-pill shadow-sm"
+          value={value}
+          onChange={onChange}
         />
       </div>
     </div>
