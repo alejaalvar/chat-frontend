@@ -2,6 +2,36 @@
 
 ---
 
+## HomePage redesign — landing page with navbar, hero, and footer
+
+### What changed
+
+**`src/pages/HomePage.tsx`** — complete rewrite. The previous file was a bare stub (`<main><h1>Home</h1></main>`) with no layout, no Bootstrap classes, and no way for a user to navigate to login or sign up.
+
+The new page is a three-section flex layout:
+- **Navbar** — `navbar-expand-md`, collapses to hamburger on mobile. Contains the "Chat App" brand and Log In / Sign Up buttons.
+- **Main/hero** — vertically centered single column. Headline ("Welcome to Chat App"), two paragraphs (origins, privacy/simplicity), and two body CTAs (Log In + Get Started).
+- **Footer** — copyright line pinned to the bottom of the viewport.
+
+### Decisions made
+
+- **React `useState` toggler instead of Bootstrap JS** — the navbar collapse animation needs the Bootstrap JS bundle. Importing it risked interfering with `ProfileSetupModal`, which is manually controlled via React state (add/remove `show d-block`). The existing "manual Bootstrap control via React state" pattern is already established in the app, so the same approach was used here: `navOpen` state + conditionally appending `show` to the collapse div's class list.
+
+- **No shared `<Navbar>` component** — the homepage navbar is homepage-specific. The dashboard has a completely different layout (no top nav at all). Extracting a shared component would be premature for a single use site.
+
+- **`bg-body-secondary` as the page background** — matches the sidebar's background color and reads as the neutral "shell" color already established in the app.
+
+- **`badge bg-primary rounded-pill` on the headline** — mirrors the "Messaging" badge in the Sidebar heading; reuses the most prominent accent already in the app.
+
+- **`col-md-8 mx-auto` on paragraphs** — constrains line length on wide screens for readability without adding any custom CSS.
+
+### Areas to revisit
+
+- **Navbar active state** — if more top-level pages are added (e.g. an "About" page), the navbar links will need an active indicator. React Router's `<NavLink>` with `isActive` handles this cleanly.
+- **Hamburger close on navigate** — clicking a nav link on mobile doesn't close the menu. Could be fixed by calling `setNavOpen(false)` in each link's `onClick`, or by wrapping links in a component that listens to route changes.
+
+---
+
 ## ProtectedRoute — auth guard + context re-hydration
 
 ### What changed
