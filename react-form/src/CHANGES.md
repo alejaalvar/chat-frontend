@@ -2,6 +2,42 @@
 
 ---
 
+## Mobile dashboard — panel swap
+
+### What changed
+
+**`src/pages/DashboardPage.tsx`**
+Two conditional class suffixes added to the column divs:
+
+```tsx
+<div className={`col-md-3 p-0${selectedContact ? " d-none d-md-block" : ""}`}>
+<div className={`col-md-9 p-0${!selectedContact ? " d-none d-md-block" : ""}`}>
+```
+
+No other files changed.
+
+### Why
+
+Below Bootstrap's `md` breakpoint (768px), both columns stacked full-width — sidebar on top, empty message board below. Neither panel was usable. The `selectedContact` state that already existed in `DashboardPage` is the natural driver for which panel a mobile user should see:
+- `null` → browsing contacts → show sidebar
+- non-null → in a conversation → show message board
+
+### How `d-none d-md-block` works
+
+`d-none` sets `display: none` (element takes no space). `d-md-block` overrides that back to `display: block` at the `md` breakpoint and wider. Together they mean "hidden on mobile, visible on desktop." This is the standard Bootstrap responsive column visibility pattern, and follows the same conditional className string pattern already used in the app (navbar collapse, etc.).
+
+### Decisions made
+
+- **No new state** — `selectedContact` already encodes the view the user should be in. Driving mobile visibility from it keeps the component tree exactly as-is.
+- **X button becomes "back"** — `MessageBoardHeader`'s dismiss button already calls `setSelectedContact(null)`, which now returns the user to the contact list on mobile. No prop or component changes needed.
+- **Empty state hidden on mobile** — the "Select a contact to start chatting" placeholder in MessageBoard is hidden on mobile (it's behind `d-none` when no contact is selected). On mobile, the contact list is the home screen; there's no in-between state.
+
+### Areas to revisit
+
+- No new areas introduced. The existing "hamburger close on navigate" note from the homepage navbar is unrelated.
+
+---
+
 ## HomePage redesign — landing page with navbar, hero, and footer
 
 ### What changed

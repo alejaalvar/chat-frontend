@@ -15,13 +15,13 @@ function DashboardPage() {
   return (
     <div className="container-fluid m-0">
       <div className="row min-vh-100 gx-2">
-        <div className="col-md-3 p-0">
+        <div className={`col-md-3 p-0${selectedContact ? " d-none d-md-block" : ""}`}>
           <Sidebar
             onProfileClick={() => setShowModal("edit")}
             onContactSelect={setSelectedContact}
           />
         </div>
-        <div className="col-md-9 p-0">
+        <div className={`col-md-9 p-0${!selectedContact ? " d-none d-md-block" : ""}`}>
           <MessageBoard
             selectedContact={selectedContact}
             onDismiss={() => setSelectedContact(null)}
