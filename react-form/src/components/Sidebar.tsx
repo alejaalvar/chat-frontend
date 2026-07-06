@@ -22,14 +22,17 @@ export default function Sidebar({ onContactSelect, onProfileClick }: Props) {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchError, setSearchError] = useState<string | null>(null);
 
-  const { data: contactsData, error: contactsError, loading } =
-    useFetch<ContactsResponse>(
-      () =>
-        fetch(`${API_URL}/api/contacts/get-contacts-for-list`, {
-          credentials: "include",
-        }).then((r) => r.json()),
-      []
-    );
+  const {
+    data: contactsData,
+    error: contactsError,
+    loading,
+  } = useFetch<ContactsResponse>(
+    () =>
+      fetch(`${API_URL}/api/contacts/get-contacts-for-list`, {
+        credentials: "include",
+      }).then((r) => r.json()),
+    [],
+  );
 
   const contacts: Contact[] = contactsData?.contacts ?? [];
 
@@ -49,7 +52,7 @@ export default function Sidebar({ onContactSelect, onProfileClick }: Props) {
         .then((r) => r.json())
         .then((data) => setSearchResults(data.contacts ?? []))
         .catch((e) =>
-          setSearchError(e instanceof Error ? e.message : "Search failed")
+          setSearchError(e instanceof Error ? e.message : "Search failed"),
         );
     }, 300);
 
@@ -60,7 +63,7 @@ export default function Sidebar({ onContactSelect, onProfileClick }: Props) {
   const error = contactsError ?? searchError;
 
   return (
-    <aside className="bg-primary-subtle shadow-sm rounded-4 p-3 h-100 d-flex flex-column bg-gradient">
+    <aside className="bg-body-secondary shadow-sm rounded-4 p-3 h-100 d-flex flex-column bg-gradient">
       <h1 className="mb-4">
         <span className="px-3 py-2 bg-primary text-white shadow rounded-pill">
           Messaging

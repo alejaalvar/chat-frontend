@@ -19,7 +19,9 @@ export default function ContactEntry({ contact, onClick }: Props) {
       onClick={() => onClick(contact)}
     >
       <i className="bi bi-person-circle py-6"></i>
-      <span>{contact.firstName} {contact.lastName}</span>
+      <span>
+        {contact.firstName} {contact.lastName}
+      </span>
     </button>
   );
 }
