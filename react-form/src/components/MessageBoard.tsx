@@ -28,9 +28,10 @@ interface Message {
 
 interface Props {
   selectedContact: Contact | null;
+  onDismiss: () => void;
 }
 
-export default function MessageBoard({ selectedContact }: Props) {
+export default function MessageBoard({ selectedContact, onDismiss }: Props) {
   const { user } = useUser();
   const socket = useSocket();
   const [messages, setMessages] = useState<Message[]>([]);
@@ -51,7 +52,7 @@ export default function MessageBoard({ selectedContact }: Props) {
         setMessages(data.messages ?? []);
       })
       .catch((e) =>
-        setError(e instanceof Error ? e.message : "Failed to load messages")
+        setError(e instanceof Error ? e.message : "Failed to load messages"),
       );
   }, [selectedContact]);
 
@@ -103,6 +104,7 @@ export default function MessageBoard({ selectedContact }: Props) {
     <div className="text-white rounded-4 p-2 shadow-sm w-100 h-100 d-flex flex-column bg-light-subtle">
       <MessageBoardHeader
         name={`${selectedContact.firstName} ${selectedContact.lastName}`}
+        onDismiss={onDismiss}
       />
       {error && <AuthError message={error} />}
       <div className="flex-grow-1 overflow-auto">

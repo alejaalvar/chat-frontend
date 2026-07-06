@@ -8,7 +8,7 @@ import type { Contact } from "../components/ContactEntry";
 function DashboardPage() {
   const { user } = useUser();
   const [showModal, setShowModal] = useState<"setup" | "edit" | false>(
-    user?.profileSetup === false ? "setup" : false
+    user?.profileSetup === false ? "setup" : false,
   );
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
 
@@ -22,7 +22,10 @@ function DashboardPage() {
           />
         </div>
         <div className="col-md-9 p-0">
-          <MessageBoard selectedContact={selectedContact} />
+          <MessageBoard
+            selectedContact={selectedContact}
+            onDismiss={() => setSelectedContact(null)}
+          />
         </div>
       </div>
       <ProfileSetupModal
