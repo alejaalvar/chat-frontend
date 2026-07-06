@@ -2,6 +2,41 @@
 
 ---
 
+## ProtectedRoute — auth guard + context re-hydration
+
+### What changed
+
+**New file — `src/components/ProtectedRoute.tsx`**
+A wrapper component placed around any route that requires authentication. On mount, if `user` is already in context (the user just navigated from login), it renders children immediately with no fetch. If `user` is null (page refresh, direct URL entry, fresh browser), it calls `GET /api/auth/userinfo` with the `jwt` cookie. On a 200 response it seeds `UserContext` with the returned user and renders children. On any error (401, 403, network failure) it redirects to `/login` with `replace: true` so the back button doesn't send the user back to a route they can't access. A full-page Bootstrap spinner is shown during the check.
+
+**`src/App.tsx`**
+The `/dashboard` route is now wrapped in `<ProtectedRoute>`.
+
+### Why this was needed
+
+React Context is in-memory only and resets to `null` on every page load. Two bugs shared this root cause:
+
+1. **Unauthenticated access** — any user (or browser with no cookie) could navigate directly to `/dashboard`. The sidebar's contacts fetch would get a plain-text `"You are not authenticated!"` response from `verifyToken`, `.json()` would throw, and the error `Unexpected token 'Y', "You are no"...` would appear in the UI.
+
+2. **Context lost on refresh** — a legitimately logged-in user would lose their context on refresh even though the `jwt` cookie was still valid. The socket would never connect and the sidebar would fail the same way.
+
+### Decisions made
+
+- **`useState(!user)`** — if user is already hydrated, `checking` starts as `false` and the `useEffect` exits immediately. This avoids an unnecessary round-trip on every navigation to `/dashboard` after login.
+
+- **`replace: true` on redirect** — prevents the browser's back button from looping the user back to `/dashboard` after being sent to `/login`.
+
+- **No separate `/api/auth/me` endpoint needed** — `GET /api/auth/userinfo` already existed in the backend and returns the full user object including `color`. No backend changes were required.
+
+- **`color` field** — the login/signup responses omit `color` but `/userinfo` includes it. Users who refresh will have a more complete user object in context than users who just logged in. The `User` interface already marks `color` as optional, so this is not a breaking change.
+
+### Areas to revisit
+
+- **Other protected routes** — if new pages are added that require auth, they should also be wrapped in `<ProtectedRoute>`. No mechanism exists yet to protect routes in bulk (e.g. a layout route).
+- **Token expiry** — the JWT expires after 3 days. If a user sits on the dashboard longer than that and then tries to send a message, the socket will disconnect and fetches will fail. A 401 interceptor at the fetch layer (or a socket reconnect handler) would handle this gracefully.
+
+---
+
 ## Socket error handling + Sidebar loading spinner
 
 ### What changed
