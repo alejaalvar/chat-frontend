@@ -13,7 +13,7 @@ export default function MessageBoardHeader({
       </div>
       <button
         onClick={onDismiss}
-        className="btn btn-primary border-0 rounded m-2"
+        className="btn btn-danger border-0 rounded m-2"
       >
         <i className="bi bi-x"></i>
       </button>
