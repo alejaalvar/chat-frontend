@@ -63,8 +63,8 @@ export default function Sidebar({ onContactSelect, onProfileClick }: Props) {
   const error = contactsError ?? searchError;
 
   return (
-    <aside className="bg-body-secondary shadow-sm rounded-4 p-3 h-100 d-flex flex-column bg-gradient">
-      <h1 className="mb-4">
+    <aside className="bg-body-secondary shadow-sm rounded-4 p-3 me-2 h-100 d-flex flex-column bg-gradient">
+      <h1 className="mb-4 fs-3">
         <span className="px-3 py-2 bg-primary text-white shadow rounded-pill">
           Messaging
         </span>
