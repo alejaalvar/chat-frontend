@@ -17,10 +17,11 @@ async function signup(email: string, password: string): Promise<User> {
     credentials: "include",
   });
 
-  const data = await res.json();
   if (!res.ok) {
-    throw new Error(data.message);
+    const err = await res.json().catch(() => ({}));
+    throw new Error((err as { message?: string }).message ?? "Signup failed");
   }
+  const data = await res.json();
   return data.user as User;
 }
 
