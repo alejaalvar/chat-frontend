@@ -2,6 +2,49 @@
 
 ---
 
+## Fix: iOS WebKit ITP — contacts failing on all iOS browsers
+
+### What changed
+
+**`public/_redirects`** — added an API proxy rule above the existing SPA rule:
+```
+/api/*  https://instant-messaging-app-production.up.railway.app/api/:splat  200
+/*      /index.html   200
+```
+
+**`src/context/SocketContext.tsx`** — changed `VITE_API_URL` → `VITE_SOCKET_URL`. Socket.IO must still reach Railway directly (Netlify can't proxy WebSocket upgrades), so it needs its own env var separate from the REST API URL.
+
+**`src/components/Sidebar.tsx`** — added `r.ok` check before `.json()` in the contacts fetcher. Previously, a non-OK response (like a plain-text 401) would cause `.json()` to throw a WebKit-specific SyntaxError: "The string did not match the expected pattern." Now it throws a readable message instead.
+
+### Root cause
+
+On iOS, **all browsers use WebKit** — Apple mandates it. WebKit's ITP (Intelligent Tracking Prevention) classified Railway (`instant-messaging-app-production.up.railway.app`) as a third-party domain and blocked the `jwt` cookie from being sent in cross-origin fetch requests. Even though the cookie is set with `SameSite=None; Secure`, ITP intercepts it before it can leave the browser. The backend returned a plain-text 401, `.json()` threw, and WebKit surfaced it as "The string did not match the expected pattern."
+
+This affected every browser on iOS (Safari, Chrome, DuckDuckGo) because they all share the same WebKit engine.
+
+### How the proxy fix works
+
+With the `/api/*` proxy rule in `_redirects`, all REST API calls go from the browser to `https://cs314-chat-app.netlify.app/api/...` (same origin). Netlify proxies them server-to-server to Railway. The browser no longer makes a cross-origin request, so ITP never fires. The `jwt` cookie is now stored for the Netlify domain and sent with every same-origin `/api/*` request automatically.
+
+### Netlify env var changes required (do in dashboard)
+
+- `VITE_API_URL` → `""` (empty string — makes REST fetch calls use relative paths like `/api/...`)
+- `VITE_SOCKET_URL` → `https://instant-messaging-app-production.up.railway.app`
+
+After updating env vars, trigger a new deploy in the Netlify dashboard (env var changes alone don't rebuild).
+
+### Local `.env` changes required
+
+Add `VITE_SOCKET_URL=http://localhost:3001` alongside the existing `VITE_API_URL=http://localhost:3001`.
+
+### Socket.IO note
+
+The socket connects directly to Railway (`VITE_SOCKET_URL`). After this change, the `jwt` cookie is stored for the Netlify domain and won't be sent with the socket handshake to Railway. Socket-based message delivery should be tested on iOS after the contacts fix is confirmed; if routing breaks, the follow-up fix is to pass `auth: { userId: user.id }` in the socket options and update the backend socket handler to read from `socket.handshake.auth`.
+
+---
+
+---
+
 ## Netlify deployment prep
 
 ### What changed

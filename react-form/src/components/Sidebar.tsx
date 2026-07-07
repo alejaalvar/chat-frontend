@@ -30,7 +30,10 @@ export default function Sidebar({ onContactSelect, onProfileClick }: Props) {
     () =>
       fetch(`${API_URL}/api/contacts/get-contacts-for-list`, {
         credentials: "include",
-      }).then((r) => r.json()),
+      }).then((r) => {
+        if (!r.ok) throw new Error("Failed to load contacts");
+        return r.json();
+      }),
     [],
   );
 

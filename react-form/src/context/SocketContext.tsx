@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { io, Socket } from "socket.io-client";
 import { useUser } from "./UserContext";
 
-const API_URL = import.meta.env.VITE_API_URL;
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL;
 
 const SocketContext = createContext<Socket | null>(null);
 
@@ -13,7 +13,7 @@ export function SocketProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!user) return;
-    const s = io(API_URL, { withCredentials: true });
+    const s = io(SOCKET_URL, { withCredentials: true });
     setSocket(s);
     return () => {
       s.disconnect();
