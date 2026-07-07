@@ -2,7 +2,37 @@
 
 ---
 
-## Fix: iOS WebKit ITP — contacts failing on all iOS browsers
+## Fix: socket auth broken after Netlify proxy change
+
+### What changed
+
+**`server/controllers/AuthController.js`** (backend) — login and signup responses now include `token` in the JSON body alongside `user`. The `httpOnly` cookie is still set exactly as before; `token` is simply also returned so that JavaScript (which cannot read `httpOnly` cookies) can access it.
+
+**`server/socket/socketHandlers.js`** (backend) — token extraction now checks `socket.handshake.auth?.token` first, then falls back to the cookie path. This makes the socket handler work for both the deployed app (token via `auth`) and localhost dev (token via cookie, no `auth` token needed).
+
+**`src/context/UserContext.tsx`** — added `token: string | null` and `setToken` to the context so the token stored at login is accessible anywhere in the tree, including SocketContext.
+
+**`src/components/LoginForm.tsx` and `SignupForm.tsx`** — `login()` / `signup()` functions now return `{ user, token }` instead of just `user`. `handleSubmit` destructures both and calls `setToken(token)` after `setUser(user)`.
+
+**`src/context/SocketContext.tsx`** — reads `token` from `useUser()` and passes `auth: { token }` to `io()`. The `useEffect` now guards on both `user` and `token`, and `token` is added to the dependency array so the socket reconnects if the token ever changes.
+
+### Root cause
+
+The Netlify proxy fix (previous entry) stored the `jwt` cookie under `cs314-chat-app.netlify.app`. The Socket.IO connection still goes directly to Railway. When the browser upgrades to WebSocket at Railway's domain, it does not send a cookie that belongs to Netlify — so the socket handshake arrived with no cookie, the handler disconnected immediately, and no messages could be sent or received.
+
+The `jwt` cookie is `httpOnly: true`, so JavaScript cannot read it directly and pass it through. The solution is to return the token in the login/signup response body, keep it in React memory (not `localStorage`), and pass it via `socket.handshake.auth.token`. The backend socket handler checks `auth.token` before the cookie, so localhost (where the cookie is first-party) still works without any change to the local dev setup.
+
+### Why the token is in memory only (not localStorage)
+
+Storing a JWT in `localStorage` exposes it to any JavaScript running on the page (XSS risk). Keeping it in React state means it lives only in memory and is gone on page refresh. The trade-off: the socket won't reconnect after a page refresh without a fresh login (but `ProtectedRoute` already handles re-auth via the `httpOnly` cookie for the REST API, so the user is still logged in — just the socket needs to be handled separately if this becomes a problem).
+
+### Local dev — no changes required
+
+On localhost, `VITE_API_URL=http://localhost:3001` makes the `jwt` cookie first-party. The socket handler's cookie fallback means local dev still works. The `auth.token` path is only needed in the deployed app where the cookie is stored for a different domain than the socket endpoint.
+
+---
+
+## Fix: Netlify CDN proxy returns 404 — switch to Netlify Function
 
 ### What changed
 

@@ -8,18 +8,18 @@ const SOCKET_URL = import.meta.env.VITE_SOCKET_URL;
 const SocketContext = createContext<Socket | null>(null);
 
 export function SocketProvider({ children }: { children: ReactNode }) {
-  const { user } = useUser();
+  const { user, token } = useUser();
   const [socket, setSocket] = useState<Socket | null>(null);
 
   useEffect(() => {
-    if (!user) return;
-    const s = io(SOCKET_URL, { withCredentials: true });
+    if (!user || !token) return;
+    const s = io(SOCKET_URL, { withCredentials: true, auth: { token } });
     setSocket(s);
     return () => {
       s.disconnect();
       setSocket(null);
     };
-  }, [user?.id]);
+  }, [user?.id, token]);
 
   return (
     <SocketContext.Provider value={socket}>{children}</SocketContext.Provider>

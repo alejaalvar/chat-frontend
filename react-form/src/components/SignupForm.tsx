@@ -9,7 +9,10 @@ import type { User } from "../context/UserContext";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-async function signup(email: string, password: string): Promise<User> {
+async function signup(
+  email: string,
+  password: string,
+): Promise<{ user: User; token: string }> {
   const res = await fetch(`${API_URL}/api/auth/signup`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -22,7 +25,7 @@ async function signup(email: string, password: string): Promise<User> {
     throw new Error((err as { message?: string }).message ?? "Signup failed");
   }
   const data = await res.json();
-  return data.user as User;
+  return { user: data.user as User, token: data.token as string };
 }
 
 function SignupForm() {
@@ -35,7 +38,7 @@ function SignupForm() {
   const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const isMatch = password === confirmPassword;
   const navigate = useNavigate();
-  const { setUser } = useUser();
+  const { setUser, setToken } = useUser();
 
   const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault(); // w/o this we can navigate w/empty fieldsets
@@ -49,8 +52,9 @@ function SignupForm() {
       return;
     }
     try {
-      const user = await signup(email, password);
+      const { user, token } = await signup(email, password);
       setUser(user);
+      setToken(token);
       navigate("/dashboard");
     } catch (err) {
       setError((err as Error).message);

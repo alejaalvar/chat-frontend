@@ -9,7 +9,10 @@ import type { User } from "../context/UserContext";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-async function login(email: string, password: string): Promise<User> {
+async function login(
+  email: string,
+  password: string,
+): Promise<{ user: User; token: string }> {
   const res = await fetch(`${API_URL}/api/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -22,7 +25,7 @@ async function login(email: string, password: string): Promise<User> {
     throw new Error((err as { message?: string }).message ?? "Login failed");
   }
   const data = await res.json();
-  return data.user as User;
+  return { user: data.user as User, token: data.token as string };
 }
 
 /*
@@ -46,15 +49,16 @@ function LoginForm() {
   const [error, setError] = useState<string | null>(null);
 
   const navigate = useNavigate();
-  const { setUser } = useUser();
+  const { setUser, setToken } = useUser();
 
   const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
     try {
-      const user = await login(email, password);
+      const { user, token } = await login(email, password);
       setUser(user);
+      setToken(token);
       navigate("/dashboard");
     } catch (err) {
       setError((err as Error).message);
