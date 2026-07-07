@@ -2,6 +2,24 @@
 
 ---
 
+## Netlify deployment prep
+
+### What changed
+
+**`public/_redirects`** (new file) — one-line Netlify redirect rule: `/* /index.html 200`. Without this, navigating directly to any client-side route (`/dashboard`, `/login`, etc.) would return a 404 from Netlify's file server. React Router only handles routes after `index.html` has loaded; this rule ensures every request goes there first.
+
+**`.gitignore`** — added `.env`. The `.env` file was not previously ignored. While `VITE_API_URL` is not itself secret, committing `.env` files creates a habit that becomes dangerous when real secrets (JWT keys, DB passwords) are added. Netlify build-time environment variables replace the committed value.
+
+### Netlify setup (done in dashboard, not code)
+
+- Base directory: `react-form`
+- Build command: `npm run build`
+- Publish directory: `dist`
+- Environment variable: `VITE_API_URL = https://instant-messaging-app-production.up.railway.app`
+- Site name: `cs314-chat-app` (backend CORS already allows this origin)
+
+---
+
 ## Mobile dashboard — panel swap
 
 ### What changed
